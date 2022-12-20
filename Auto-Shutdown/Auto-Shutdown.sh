@@ -26,7 +26,7 @@ MIN_CONT=15 #MINUTOS DE BONUS PARA PERMANCER LIGADO ENQUANTO ESTIVER USANDO O SI
 coletar_processos(){
     TOP=$(top -b -n1 | sed -n '8p' | tr -s ' ')
     export CPU=$(echo $TOP | cut -d ' ' -f9 | cut -d ',' -f1)
-    export CPU=$(echo $TOP | cut -d ' ' -f10 | cut -d ',' -f1)
+    export MEM=$(echo $TOP | cut -d ' ' -f10 | cut -d ',' -f1)
 }
 
 count_change(){
@@ -43,7 +43,7 @@ verifica_shutdown(){
     if [ $MIN_CONT -lt 1 ]
     then
         echo $(date) ' | ' "Desligando sistema..."
-        #sudo shutdown -h now
+        sudo shutdown -h now
     fi
 }
 
@@ -53,7 +53,7 @@ do
     coletar_processos
     count_change
     verifica_shutdown
-    sleep 1
+    sleep 60
 done
 
 

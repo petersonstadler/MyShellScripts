@@ -21,8 +21,8 @@
 CPU=30
 MEM=30
 MIN_USE=15 #MINIMO DE USO DE CPU E MEMORIA PARA PERMANECER LIGADO (X%)
-MIN_CONT=15 #MINUTOS DE BONUS PARA PERMANCER LIGADO ENQUANTO ESTIVER USANDO O SISTEMA
-
+MIN_CONT=8 #MINUTOS DE BONUS PARA PERMANCER LIGADO ENQUANTO ESTIVER USANDO O SISTEMA
+MAX_CONT=8
 coletar_processos(){
     TOP=$(top -b -n1 | sed -n '8p' | tr -s ' ')
     export CPU=$(echo $TOP | cut -d ' ' -f9 | cut -d ',' -f1)
@@ -33,7 +33,7 @@ count_change(){
     if [ $CPU -lt $MIN_USE ] && [ $MEM -lt $MIN_USE ]; then
         export MIN_CONT=$((MIN_CONT-1))
     else
-        if [ $MIN_CONT -lt 15 ]; then
+        if [ $MIN_CONT -lt $MAX_CONT ]; then
             export MIN_CONT=$((MIN_CONT+1))
         fi
     fi
@@ -55,9 +55,3 @@ do
     verifica_shutdown
     sleep 60
 done
-
-
-
-
-
-

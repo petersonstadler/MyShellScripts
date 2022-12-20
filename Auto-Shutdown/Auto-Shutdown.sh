@@ -26,6 +26,7 @@ MAX_CONT=8
 CURRENT_USER=$(who | grep peterson | tr -s ' ' | cut -d ' ' -f1)
 
 coletar_processos(){
+    export CURRENT_USER=$(who | grep peterson | tr -s ' ' | cut -d ' ' -f1)
     TOP=$(top -b -n1 | sed -n '8p' | tr -s ' ')
     export CPU=$(echo $TOP | cut -d ' ' -f9 | cut -d ',' -f1)
     export MEM=$(echo $TOP | cut -d ' ' -f10 | cut -d ',' -f1)

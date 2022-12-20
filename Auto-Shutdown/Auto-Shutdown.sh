@@ -20,9 +20,11 @@
 
 CPU=30
 MEM=30
-MIN_USE=15 #MINIMO DE USO DE CPU E MEMORIA PARA PERMANECER LIGADO (X%)
+MIN_USE=20 #MINIMO DE USO DE CPU E MEMORIA PARA PERMANECER LIGADO (X%)
 MIN_CONT=8 #MINUTOS DE BONUS PARA PERMANCER LIGADO ENQUANTO ESTIVER USANDO O SISTEMA
 MAX_CONT=8
+CURRENT_USER=$(who | grep peterson | tr -s ' ' | cut -d ' ' -f1)
+
 coletar_processos(){
     TOP=$(top -b -n1 | sed -n '8p' | tr -s ' ')
     export CPU=$(echo $TOP | cut -d ' ' -f9 | cut -d ',' -f1)
@@ -30,8 +32,14 @@ coletar_processos(){
 }
 
 count_change(){
-    if [ $CPU -lt $MIN_USE ] && [ $MEM -lt $MIN_USE ]; then
-        export MIN_CONT=$((MIN_CONT-1))
+    if [ $CURRENT_USER != 'peterson' ]; then
+        if [ $CPU -lt $MIN_USE ] && [ $MEM -lt $MIN_USE ]; then
+            export MIN_CONT=$((MIN_CONT-1))
+        else
+            if [ $MIN_CONT -lt $MAX_CONT ]; then
+                export MIN_CONT=$((MIN_CONT+1))
+            fi
+        fi
     else
         if [ $MIN_CONT -lt $MAX_CONT ]; then
             export MIN_CONT=$((MIN_CONT+1))
@@ -42,14 +50,14 @@ count_change(){
 verifica_shutdown(){
     if [ $MIN_CONT -lt 1 ]
     then
-        echo $(date) ' | ' "Desligando sistema..."
+        echo "Desligando sistema..."
         sudo shutdown -h now
     fi
 }
 
 while true
 do
-    echo $(date) ' | ' "CPU: $CPU %" - "Memória: $MEM %" - "desligar em: $MIN_CONT minutos"
+    echo "CPU: $CPU %" - "Memória: $MEM %" '|' "desligar em: $MIN_CONT minutos"
     coletar_processos
     count_change
     verifica_shutdown

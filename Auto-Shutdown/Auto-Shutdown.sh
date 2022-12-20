@@ -30,10 +30,11 @@ coletar_processos(){
     TOP=$(top -b -n1 | sed -n '8p' | tr -s ' ')
     export CPU=$(echo $TOP | cut -d ' ' -f9 | cut -d ',' -f1)
     export MEM=$(echo $TOP | cut -d ' ' -f10 | cut -d ',' -f1)
+    echo "CPU: $CPU %" - "Memória: $MEM %" '|' "desligar em: $MIN_CONT minutos | Usuário: $CURRENT_USER"
 }
 
 count_change(){
-    if [ $CURRENT_USER != 'peterson' ]; then
+    if [[ $CURRENT_USER != "peterson" ]]; then
         if [ $CPU -lt $MIN_USE ] && [ $MEM -lt $MIN_USE ]; then
             export MIN_CONT=$((MIN_CONT-1))
         else
@@ -58,7 +59,6 @@ verifica_shutdown(){
 
 while true
 do
-    echo "CPU: $CPU %" - "Memória: $MEM %" '|' "desligar em: $MIN_CONT minutos"
     coletar_processos
     count_change
     verifica_shutdown
